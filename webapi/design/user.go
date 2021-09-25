@@ -10,6 +10,8 @@ var _ = Resource("user", func() {
 	Action("get", func() {
 		Routing(GET("/:user_id"))
 		Response(OK, UserMedia)
+		Response(NotFound)
+		Response(InternalServerError)
 	})
 })
 

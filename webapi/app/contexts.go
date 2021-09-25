@@ -45,3 +45,15 @@ func (ctx *GetUserContext) OK(r *UserMedia) error {
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *GetUserContext) NotFound() error {
+	ctx.ResponseData.WriteHeader(404)
+	return nil
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *GetUserContext) InternalServerError() error {
+	ctx.ResponseData.WriteHeader(500)
+	return nil
+}
