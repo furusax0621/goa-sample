@@ -11,6 +11,7 @@ import (
 	"context"
 	goa "github.com/shogo82148/goa-v1"
 	"net/http"
+	"strconv"
 )
 
 // GetUserContext provides the user get action context.
@@ -18,7 +19,7 @@ type GetUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	UserID string
+	UserID int
 }
 
 // NewGetUserContext parses the incoming request URL and body, performs validations and creates the
@@ -33,7 +34,11 @@ func NewGetUserContext(ctx context.Context, r *http.Request, service *goa.Servic
 	paramUserID := req.Params["user_id"]
 	if len(paramUserID) > 0 {
 		rawUserID := paramUserID[0]
-		rctx.UserID = rawUserID
+		if userID, err2 := strconv.Atoi(rawUserID); err2 == nil {
+			rctx.UserID = userID
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("user_id", rawUserID, "integer"))
+		}
 	}
 	return &rctx, err
 }

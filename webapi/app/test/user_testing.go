@@ -25,7 +25,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) http.ResponseWriter {
+func GetUserInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int) http.ResponseWriter {
 	t.Helper()
 
 	// Setup service
@@ -87,7 +87,7 @@ func GetUserInternalServerError(t goatest.TInterface, ctx context.Context, servi
 // It returns the response writer so it's possible to inspect the response headers.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) http.ResponseWriter {
+func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int) http.ResponseWriter {
 	t.Helper()
 
 	// Setup service
@@ -149,7 +149,7 @@ func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.UserMedia) {
+func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int) (http.ResponseWriter, *app.UserMedia) {
 	t.Helper()
 
 	// Setup service

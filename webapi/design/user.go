@@ -9,6 +9,9 @@ var _ = Resource("user", func() {
 	BasePath("/users")
 	Action("get", func() {
 		Routing(GET("/:user_id"))
+		Params(func() {
+			Param("user_id", Integer)
+		})
 		Response(OK, UserMedia)
 		Response(NotFound)
 		Response(InternalServerError)
