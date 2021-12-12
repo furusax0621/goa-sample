@@ -57,8 +57,6 @@ paths:
             $ref: '#/definitions/User_media'
         "404":
           description: Not Found
-        "500":
-          description: Internal Server Error
       schemes:
       - https
       summary: get user
@@ -67,8 +65,6 @@ paths:
 produces:
 - application/json
 responses:
-  InternalServerError:
-    description: Internal Server Error
   NotFound:
     description: Not Found
 schemes:

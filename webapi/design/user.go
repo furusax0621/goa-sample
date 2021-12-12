@@ -14,7 +14,6 @@ var _ = Resource("user", func() {
 		})
 		Response(OK, UserMedia)
 		Response(NotFound)
-		Response(InternalServerError)
 	})
 })
 

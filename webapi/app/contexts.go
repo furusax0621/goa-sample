@@ -56,9 +56,3 @@ func (ctx *GetUserContext) NotFound() error {
 	ctx.ResponseData.WriteHeader(404)
 	return nil
 }
-
-// InternalServerError sends a HTTP response with status code 500.
-func (ctx *GetUserContext) InternalServerError() error {
-	ctx.ResponseData.WriteHeader(500)
-	return nil
-}
