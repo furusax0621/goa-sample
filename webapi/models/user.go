@@ -20,17 +20,20 @@ func NewSyncUserMap() *SyncUserMap {
 	}
 }
 
-func (m *SyncUserMap) Store(givenName, familyName string, createdAt time.Time) {
+func (m *SyncUserMap) Store(givenName, familyName string, createdAt time.Time) *app.UserMedia {
 	m.mx.Lock()
 	defer m.mx.Unlock()
 
-	m.users[m.nextID] = &app.UserMedia{
+	user := &app.UserMedia{
 		UserID:     m.nextID,
 		GivenName:  givenName,
 		FamilyName: familyName,
 		CreatedAt:  createdAt,
 	}
+	m.users[m.nextID] = user
 	m.nextID++
+
+	return user
 }
 
 func (m *SyncUserMap) Load(id int) (*app.UserMedia, bool) {
