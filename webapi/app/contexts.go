@@ -56,3 +56,76 @@ func (ctx *GetUserContext) NotFound() error {
 	ctx.ResponseData.WriteHeader(404)
 	return nil
 }
+
+// PostUserContext provides the user post action context.
+type PostUserContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Payload *PostUserPayload
+}
+
+// NewPostUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller post action.
+func NewPostUserContext(ctx context.Context, r *http.Request, service *goa.Service) (*PostUserContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := PostUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// postUserPayload is the user post action payload.
+type postUserPayload struct {
+	// 姓
+	FamilyName *string `form:"family_name,omitempty" json:"family_name,omitempty" yaml:"family_name,omitempty" xml:"family_name,omitempty"`
+	// 名前
+	GivenName *string `form:"given_name,omitempty" json:"given_name,omitempty" yaml:"given_name,omitempty" xml:"given_name,omitempty"`
+}
+
+// Validate runs the validation rules defined in the design.
+func (payload *postUserPayload) Validate() (err error) {
+	if payload.GivenName == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "given_name"))
+	}
+	if payload.FamilyName == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "family_name"))
+	}
+	return
+}
+
+// Publicize creates PostUserPayload from postUserPayload
+func (payload *postUserPayload) Publicize() *PostUserPayload {
+	var pub PostUserPayload
+	if payload.FamilyName != nil {
+		pub.FamilyName = *payload.FamilyName
+	}
+	if payload.GivenName != nil {
+		pub.GivenName = *payload.GivenName
+	}
+	return &pub
+}
+
+// PostUserPayload is the user post action payload.
+type PostUserPayload struct {
+	// 姓
+	FamilyName string `form:"family_name" json:"family_name" yaml:"family_name" xml:"family_name"`
+	// 名前
+	GivenName string `form:"given_name" json:"given_name" yaml:"given_name" xml:"given_name"`
+}
+
+// Validate runs the validation rules defined in the design.
+func (payload *PostUserPayload) Validate() (err error) {
+
+	return
+}
+
+// Created sends a HTTP response with status code 201.
+func (ctx *PostUserContext) Created(r *UserMedia) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.user_media+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
+}
