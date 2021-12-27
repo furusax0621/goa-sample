@@ -15,6 +15,23 @@ var _ = Resource("user", func() {
 		Response(OK, UserMedia)
 		Response(NotFound)
 	})
+
+	Action("post", func() {
+		Routing(POST(""))
+		Payload(func() {
+			Member("given_name", String, func() {
+				Description("名前")
+				Example("太郎")
+			})
+			Member("family_name", String, func() {
+				Description("姓")
+				Example("田中")
+			})
+
+			Required("given_name", "family_name")
+		})
+		Response(Created, UserMedia)
+	})
 })
 
 var UserMedia = MediaType("application/vnd.user_media+json", func() {

@@ -2,6 +2,24 @@ basePath: /v1
 consumes:
 - application/json
 definitions:
+  PostUserPayload:
+    example:
+      family_name: 田中
+      given_name: 太郎
+    properties:
+      family_name:
+        description: 姓
+        example: 田中
+        type: string
+      given_name:
+        description: 名前
+        example: 太郎
+        type: string
+    required:
+    - given_name
+    - family_name
+    title: PostUserPayload
+    type: object
   User_media:
     description: User_media media type (default view)
     example:
@@ -40,6 +58,27 @@ info:
   title: Goa Sample
   version: v1
 paths:
+  /users:
+    post:
+      operationId: user#post
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/PostUserPayload'
+      produces:
+      - application/vnd.user_media+json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/User_media'
+      schemes:
+      - https
+      summary: post user
+      tags:
+      - user
   /users/{user_id}:
     get:
       operationId: user#get

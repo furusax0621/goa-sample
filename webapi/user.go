@@ -34,3 +34,11 @@ func (c *UserController) Get(ctx *app.GetUserContext) error {
 
 	return ctx.OK(media)
 }
+
+// Post creates new user.
+func (c *UserController) Post(ctx *app.PostUserContext) error {
+	now := time.Now()
+	media := c.userMap.Store(ctx.Payload.GivenName, ctx.Payload.FamilyName, now)
+
+	return ctx.Created(media)
+}

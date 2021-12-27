@@ -28,6 +28,7 @@ func initService(service *goa.Service) {
 type UserController interface {
 	goa.Muxer
 	Get(*GetUserContext) error
+	Post(*PostUserContext) error
 }
 
 // MountUserController "mounts" a User resource controller on the given service.
@@ -49,4 +50,40 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 	}
 	service.Mux.Handle("GET", "/v1/users/:user_id", ctrl.MuxHandler("get", h, nil))
 	service.LogInfo("mount", "ctrl", "User", "action", "Get", "route", "GET /v1/users/:user_id")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewPostUserContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*PostUserPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
+		return ctrl.Post(rctx)
+	}
+	service.Mux.Handle("POST", "/v1/users", ctrl.MuxHandler("post", h, unmarshalPostUserPayload))
+	service.LogInfo("mount", "ctrl", "User", "action", "Post", "route", "POST /v1/users")
+}
+
+// unmarshalPostUserPayload unmarshals the request body into the context request data Payload field.
+func unmarshalPostUserPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &postUserPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }
